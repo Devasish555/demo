@@ -1,0 +1,118 @@
+.account-page {
+  min-height: 60vh;
+  background: #fff;
+  padding: 60px 20px 80px;
+}
+
+.account-page .container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.account-header {
+  margin-bottom: 50px;
+}
+
+.account-header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  margin: 0 0 10px 0;
+}
+
+.logout-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logout-link svg {
+  width: 16px;
+  height: 16px;
+  stroke: #666;
+}
+
+.logout-link a {
+  color: #666;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.logout-link a:hover {
+  color: #1a1a2e;
+}
+
+.account-content {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 60px;
+}
+
+.order-history h2,
+.account-details h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 15px 0;
+}
+
+.order-history p {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.account-details {
+  text-align: right;
+}
+
+.user-name {
+  color: #333;
+  font-size: 0.95rem;
+  margin: 0 0 5px 0;
+}
+
+.user-country {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0 0 15px 0;
+}
+
+.view-addresses {
+  color: #666;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.view-addresses:hover {
+  color: #1a1a2e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .account-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .account-details {
+    text-align: left;
+  }
+  
+  .account-header h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .account-page {
+    padding: 40px 15px 60px;
+  }
+  
+  .account-header h1 {
+    font-size: 1.8rem;
+  }
+}
