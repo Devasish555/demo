@@ -58,43 +58,43 @@ function Navbar() {
         <div className="navbar-bottom desktop-only">
           <div className="navbar-container">
             <ul className="nav-links">
-              <li><Link to="/new-year">New Year</Link></li>
-              <li><Link to="/celebrity-hampers">Celebrity Hampers</Link></li>
+              <li><Link to="/products/new-year">New Year</Link></li>
+              <li><Link to="/products/celebrity-hampers">Celebrity Hampers</Link></li>
               <li className="dropdown">
                 <span>Birthdays <span className="arrow">▾</span></span>
                 <ul className="dropdown-menu">
-                  <li><Link to="/birthday/for-him">Birthday for Him</Link></li>
-                  <li><Link to="/birthday/for-her">Birthday for Her</Link></li>
+                  <li><Link to="/products/birthday">Birthday for Him</Link></li>
+                  <li><Link to="/products/birthday">Birthday for Her</Link></li>
                 </ul>
               </li>
               <li className="dropdown">
                 <span>Anniversary <span className="arrow">▾</span></span>
                 <ul className="dropdown-menu">
-                  <li><Link to="/anniversary/for-couple">For Couple</Link></li>
-                  <li><Link to="/anniversary/for-parents">For Parents</Link></li>
+                  <li><Link to="/products/anniversary">For Couple</Link></li>
+                  <li><Link to="/products/anniversary">For Parents</Link></li>
                 </ul>
               </li>
-              <li><Link to="/last-minute">Last Minute Gifting</Link></li>
+              <li><Link to="/products/last-minute">Last Minute Gifting</Link></li>
               <li className="dropdown">
                 <span>Best Sellers <span className="arrow">▾</span></span>
                 <ul className="dropdown-menu">
-                  <li><Link to="/bestsellers/hampers">Gift Hampers</Link></li>
-                  <li><Link to="/bestsellers/chocolates">Chocolates</Link></li>
+                  <li><Link to="/products/bestsellers">Gift Hampers</Link></li>
+                  <li><Link to="/products/bestsellers">Chocolates</Link></li>
                 </ul>
               </li>
-              <li><Link to="/create-hamper">Create Your Own Hamper</Link></li>
+              <li><Link to="/products/create-hamper">Create Your Own Hamper</Link></li>
               <li className="dropdown">
                 <span>Plants & Flowers <span className="arrow">▾</span></span>
                 <ul className="dropdown-menu">
-                  <li><Link to="/plants">Indoor Plants</Link></li>
-                  <li><Link to="/flowers">Fresh Flowers</Link></li>
+                  <li><Link to="/products/plants-flowers">Indoor Plants</Link></li>
+                  <li><Link to="/products/plants-flowers">Fresh Flowers</Link></li>
                 </ul>
               </li>
               <li className="dropdown">
                 <span>More Gifts <span className="arrow">▾</span></span>
                 <ul className="dropdown-menu">
-                  <li><Link to="/mugs">Mugs & Frames</Link></li>
-                  <li><Link to="/dry-fruits">Dry Fruits</Link></li>
+                  <li><Link to="/products">Mugs & Frames</Link></li>
+                  <li><Link to="/products">Dry Fruits</Link></li>
                 </ul>
               </li>
             </ul>
@@ -133,15 +133,15 @@ function Navbar() {
             <button onClick={() => setMenuOpen(false)}>✕</button>
           </div>
           <ul>
-            <li><Link to="/new-year" onClick={() => setMenuOpen(false)}>New Year</Link></li>
-            <li><Link to="/celebrity-hampers" onClick={() => setMenuOpen(false)}>Celebrity Hampers</Link></li>
-            <li><Link to="/birthday" onClick={() => setMenuOpen(false)}>Birthdays</Link></li>
-            <li><Link to="/anniversary" onClick={() => setMenuOpen(false)}>Anniversary</Link></li>
-            <li><Link to="/last-minute" onClick={() => setMenuOpen(false)}>Last Minute Gifting</Link></li>
-            <li><Link to="/bestsellers" onClick={() => setMenuOpen(false)}>Best Sellers</Link></li>
-            <li><Link to="/create-hamper" onClick={() => setMenuOpen(false)}>Create Your Own Hamper</Link></li>
-            <li><Link to="/plants-flowers" onClick={() => setMenuOpen(false)}>Plants & Flowers</Link></li>
-            <li><Link to="/corporate" onClick={() => setMenuOpen(false)}>Corporate Gifts</Link></li>
+            <li><Link to="/products/new-year" onClick={() => setMenuOpen(false)}>New Year</Link></li>
+            <li><Link to="/products/celebrity-hampers" onClick={() => setMenuOpen(false)}>Celebrity Hampers</Link></li>
+            <li><Link to="/products/birthday" onClick={() => setMenuOpen(false)}>Birthdays</Link></li>
+            <li><Link to="/products/anniversary" onClick={() => setMenuOpen(false)}>Anniversary</Link></li>
+            <li><Link to="/products/last-minute" onClick={() => setMenuOpen(false)}>Last Minute Gifting</Link></li>
+            <li><Link to="/products/bestsellers" onClick={() => setMenuOpen(false)}>Best Sellers</Link></li>
+            <li><Link to="/products/create-hamper" onClick={() => setMenuOpen(false)}>Create Your Own Hamper</Link></li>
+            <li><Link to="/products/plants-flowers" onClick={() => setMenuOpen(false)}>Plants & Flowers</Link></li>
+            <li><Link to="/products/corporate" onClick={() => setMenuOpen(false)}>Corporate Gifts</Link></li>
           </ul>
         </div>
 
