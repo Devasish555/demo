@@ -1,0 +1,38 @@
+.features {
+  padding: 80px 20px;
+  background: #333;
+  color: #fff;
+}
+
+.features .section-title {
+  color: #fff;
+  margin-bottom: 50px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+}
+
+.feature-item {
+  text-align: center;
+  padding: 20px;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.feature-item h3 {
+  color: #c9a050;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.feature-item p {
+  color: #aaa;
+  font-size: 0.95rem;
+}

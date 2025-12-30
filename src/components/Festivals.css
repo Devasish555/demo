@@ -1,0 +1,35 @@
+.festivals {
+  padding: 80px 20px;
+  background: #fff;
+}
+
+.festivals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.festival-card {
+  padding: 35px 20px;
+  border-radius: 15px;
+  text-align: center;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.festival-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.festival-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.festival-card h3 {
+  color: #333;
+  font-size: 1rem;
+  margin: 0;
+}
