@@ -9,7 +9,7 @@
 .navbar::before {
   content: '';
   display: block;
-  height: 15px;
+  height: 30px;
   background: #fff;
 }
 
