@@ -111,7 +111,7 @@ function Cart() {
               <span>Total</span>
               <span>₹{total.toLocaleString()}</span>
             </div>
-            <button className="checkout-btn">Proceed to Checkout</button>
+            <Link to="/checkout" className="checkout-btn">Proceed to Checkout</Link>
             <Link to="/products" className="continue-link">Continue Shopping</Link>
           </div>
         </div>
