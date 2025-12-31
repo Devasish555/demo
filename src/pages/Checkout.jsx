@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Checkout.css'
 
 const cartItems = [
@@ -20,6 +20,7 @@ const cartItems = [
 ]
 
 function Checkout() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
@@ -50,6 +51,7 @@ function Checkout() {
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log('Order placed:', { formData, paymentMethod })
+    navigate('/order-success')
   }
 
   return (

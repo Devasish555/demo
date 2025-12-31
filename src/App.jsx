@@ -7,6 +7,7 @@ import ProductDetails from './pages/ProductDetails'
 import Account from './pages/Account'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
+import OrderSuccess from './pages/OrderSuccess'
 import './App.css'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/account" element={<Account />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
         </Routes>
         <Footer />
       </div>
