@@ -2,47 +2,7 @@ const express = require('express');
 const router = express.Router();
 const NavLink = require('../models/NavLink');
 
-// Default data for seeding
-const defaultNavLinks = [
-  { title: 'New Year', url: '/products/new-year', icon: '🎉', order: 1, isActive: true, hasDropdown: false, subLinks: [] },
-  { title: 'Celebrity Hampers', url: '/products/celebrity-hampers', icon: '⭐', order: 2, isActive: true, hasDropdown: false, subLinks: [] },
-  { title: 'Birthdays', url: '/products/birthday', icon: '🎂', order: 3, isActive: true, hasDropdown: true, subLinks: [
-    { title: 'Birthday for Him', url: '/products/birthday-him', order: 1 },
-    { title: 'Birthday for Her', url: '/products/birthday-her', order: 2 }
-  ]},
-  { title: 'Anniversary', url: '/products/anniversary', icon: '💕', order: 4, isActive: true, hasDropdown: true, subLinks: [
-    { title: 'For Couple', url: '/products/anniversary-couple', order: 1 },
-    { title: 'For Parents', url: '/products/anniversary-parents', order: 2 }
-  ]},
-  { title: 'Last Minute Gifting', url: '/products/last-minute', icon: '⏰', order: 5, isActive: true, hasDropdown: false, subLinks: [] },
-  { title: 'Best Sellers', url: '/products/bestsellers', icon: '🏆', order: 6, isActive: true, hasDropdown: true, subLinks: [
-    { title: 'Gift Hampers', url: '/products/bestsellers-hampers', order: 1 },
-    { title: 'Chocolates', url: '/products/bestsellers-chocolates', order: 2 }
-  ]},
-  { title: 'Create Your Own Hamper', url: '/products/create-hamper', icon: '🎁', order: 7, isActive: true, hasDropdown: false, subLinks: [] },
-  { title: 'Plants & Flowers', url: '/products/plants-flowers', icon: '🌿', order: 8, isActive: true, hasDropdown: true, subLinks: [
-    { title: 'Indoor Plants', url: '/products/indoor-plants', order: 1 },
-    { title: 'Fresh Flowers', url: '/products/fresh-flowers', order: 2 }
-  ]},
-  { title: 'More Gifts', url: '/products', icon: '🎀', order: 9, isActive: true, hasDropdown: true, subLinks: [
-    { title: 'Mugs & Frames', url: '/products/mugs-frames', order: 1 },
-    { title: 'Dry Fruits', url: '/products/dry-fruits', order: 2 }
-  ]}
-];
-
-// Seed database if empty
-const seedDatabase = async () => {
-  try {
-    const count = await NavLink.countDocuments();
-    if (count === 0) {
-      await NavLink.insertMany(defaultNavLinks);
-      console.log('NavLinks seeded to MongoDB');
-    }
-  } catch (error) {
-    console.log('NavLinks seed error:', error.message);
-  }
-};
-seedDatabase();
+// No default seeding - admin will add navlinks manually
 
 // Get active nav links (for frontend)
 router.get('/', async (req, res) => {

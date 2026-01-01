@@ -1,130 +1,96 @@
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useParams, useLocation } from 'react-router-dom'
 import './Products.css'
-
-const allProducts = [
-  {
-    id: 1,
-    name: 'Midnight Stash',
-    brand: 'THE GIFT STUDIO',
-    price: 1429,
-    originalPrice: null,
-    rating: 4.5,
-    reviews: 9,
-    image: 'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-  },
-  {
-    id: 2,
-    name: 'Mighty Celebration Trunk',
-    brand: 'THE GIFT STUDIO',
-    price: 7699,
-    originalPrice: null,
-    rating: 4.8,
-    reviews: 15,
-    image: 'https://images.pexels.com/photos/1050244/pexels-photo-1050244.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-  },
-  {
-    id: 3,
-    name: 'Cocoa Bliss',
-    brand: 'THE GIFT STUDIO',
-    price: 1077,
-    originalPrice: 1099,
-    rating: 4.6,
-    reviews: 8,
-    image: 'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-    sale: 2,
-  },
-  {
-    id: 4,
-    name: 'Sweet Alternatives',
-    brand: 'THE GIFT STUDIO',
-    price: 3079,
-    originalPrice: null,
-    rating: 5,
-    reviews: 1,
-    image: 'https://images.pexels.com/photos/264985/pexels-photo-264985.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-  },
-  {
-    id: 5,
-    name: 'Out Doors with Anamika Khanna',
-    brand: 'THE GIFT STUDIO',
-    price: 10999,
-    originalPrice: null,
-    rating: 4.9,
-    reviews: 7,
-    image: 'https://images.pexels.com/photos/1666069/pexels-photo-1666069.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-  },
-  {
-    id: 6,
-    name: 'Small Big Things',
-    brand: 'THE GIFT STUDIO',
-    price: 5499,
-    originalPrice: null,
-    rating: 4.4,
-    reviews: 5,
-    image: 'https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-  },
-  {
-    id: 7,
-    name: 'Purple Spray Money Plant',
-    brand: 'THE GIFT STUDIO',
-    price: 699,
-    originalPrice: null,
-    rating: 3,
-    reviews: 1,
-    image: 'https://images.pexels.com/photos/776656/pexels-photo-776656.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-  },
-  {
-    id: 8,
-    name: 'The Luxury Food Trunk',
-    brand: 'THE GIFT STUDIO',
-    price: 9679,
-    originalPrice: null,
-    rating: 4.8,
-    reviews: 8,
-    image: 'https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=600',
-    delivery: 'Tomorrow',
-  },
-]
 
 const categories = ['All', 'Hampers', 'Plants', 'Personal Care', 'Chocolates']
 
-const pageTitles = {
-  'new-year': 'New Year Gifts',
-  'celebrity-hampers': 'Celebrity Hampers',
-  'birthday': 'Birthday Gifts',
-  'anniversary': 'Anniversary Gifts',
-  'last-minute': 'Last Minute Gifting',
-  'bestsellers': 'Best Sellers',
-  'create-hamper': 'Create Your Own Hamper',
-  'plants-flowers': 'Plants & Flowers',
-  'corporate': 'Corporate Gifts',
-  'products': 'All Products',
-}
-
 function Products() {
   const { category, subcategory } = useParams()
+  const location = useLocation()
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('All')
   const [sortBy, setSortBy] = useState('price')
+  const [navLinkTitle, setNavLinkTitle] = useState('')
+
+  // Build navlink URL from params (matches database navLink URLs)
+  const navlinkUrl = subcategory 
+    ? `/products/${category}/${subcategory}`
+    : category 
+      ? `/products/${category}`
+      : null
+
+  // Fetch navlinks to get the title
+  useEffect(() => {
+    const fetchNavLinkTitle = async () => {
+      if (!navlinkUrl) {
+        setNavLinkTitle('All Products')
+        return
+      }
+      
+      try {
+        const response = await fetch('/api/navlinks')
+        if (response.ok) {
+          const navLinks = await response.json()
+          
+          // Search in main links and sublinks
+          for (const link of navLinks) {
+            if (link.url === navlinkUrl) {
+              setNavLinkTitle(link.title)
+              return
+            }
+            if (link.subLinks) {
+              const subLink = link.subLinks.find(sub => sub.url === navlinkUrl)
+              if (subLink) {
+                setNavLinkTitle(subLink.title)
+                return
+              }
+            }
+          }
+          
+          // Fallback to formatted URL
+          setNavLinkTitle(formatTitle(category))
+        }
+      } catch (error) {
+        setNavLinkTitle(formatTitle(category))
+      }
+    }
+    
+    fetchNavLinkTitle()
+  }, [navlinkUrl, category])
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true)
+      try {
+        // If we have a category/subcategory, filter by navlink
+        let url = '/api/products'
+        if (navlinkUrl) {
+          url = `/api/products?navlink=${encodeURIComponent(navlinkUrl)}`
+        }
+        
+        const response = await fetch(url)
+        if (response.ok) {
+          const data = await response.json()
+          setProducts(data)
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      }
+      setLoading(false)
+    }
+    
+    fetchProducts()
+  }, [category, subcategory, navlinkUrl])
 
   // Generate page title from URL params
   const formatTitle = (slug) => {
     if (!slug) return 'All Products'
     return slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
   }
-  
-  const pageTitle = subcategory 
-    ? `${formatTitle(category)} - ${formatTitle(subcategory)}`
-    : (pageTitles[category] || formatTitle(category))
 
-  const renderStars = (rating) => {
+  const renderStars = (rating = 4) => {
     return [...Array(5)].map((_, i) => (
       <svg key={i} className={i < Math.floor(rating) ? 'filled' : i < rating ? 'half' : ''} viewBox="0 0 24 24">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -132,10 +98,19 @@ function Products() {
     ))
   }
 
+  // Filter and sort products
+  const filteredProducts = products
+    .filter(p => activeFilter === 'All' || p.category === activeFilter)
+    .sort((a, b) => {
+      if (sortBy === 'price') return a.price - b.price
+      if (sortBy === 'rating') return (b.rating || 4) - (a.rating || 4)
+      return 0
+    })
+
   return (
     <div className="products-page">
       <div className="container">
-        <h1 className="page-title">{pageTitle}</h1>
+        <h1 className="page-title">{navLinkTitle || 'All Products'}</h1>
         
         {/* Filters */}
         <div className="filters-bar">
@@ -161,14 +136,29 @@ function Products() {
           </div>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="loading-state">
+            <p>Loading products...</p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && filteredProducts.length === 0 && (
+          <div className="empty-state">
+            <p>No products found in this category.</p>
+            <Link to="/products" className="btn-primary">View All Products</Link>
+          </div>
+        )}
+
         {/* Products Grid */}
         <div className="products-grid">
-          {allProducts.map(product => (
-            <Link to={`/product/${product.id}`} key={product.id} className="product-card">
+          {filteredProducts.map(product => (
+            <Link to={`/product/${product.id || product._id}`} key={product.id || product._id} className="product-card">
               <div className="product-image">
                 <img src={product.image} alt={product.name} />
                 {product.sale && <span className="sale-badge">Sale {product.sale}%</span>}
-                <button className="wishlist-btn">
+                <button className="wishlist-btn" onClick={(e) => e.preventDefault()}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                   </svg>
@@ -176,16 +166,16 @@ function Products() {
               </div>
               <div className="product-info">
                 <h3 className="product-name">{product.name}</h3>
-                <p className="product-brand">{product.brand}</p>
+                <p className="product-brand">{product.brand || 'THE GIFT STUDIO'}</p>
                 <div className="product-rating">
                   <div className="stars">{renderStars(product.rating)}</div>
-                  <span>({product.reviews})</span>
+                  <span>({product.reviews || 0})</span>
                 </div>
                 <div className="product-price">
                   {product.originalPrice && (
                     <span className="original">₹{product.originalPrice.toLocaleString()}</span>
                   )}
-                  <span className="current">₹{product.price.toLocaleString()}</span>
+                  <span className="current">₹{product.price?.toLocaleString()}</span>
                 </div>
                 <div className="delivery-info">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -193,7 +183,7 @@ function Products() {
                     <circle cx="6" cy="17" r="2"/>
                     <circle cx="18" cy="17" r="2"/>
                   </svg>
-                  <span>Earliest delivery: {product.delivery}</span>
+                  <span>Earliest delivery: Tomorrow</span>
                 </div>
               </div>
             </Link>

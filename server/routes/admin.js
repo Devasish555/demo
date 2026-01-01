@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 const db = require('../data/db');
 const layout = require('../admin/layout');
 const dashboardPage = require('../admin/pages/dashboard');
@@ -11,6 +13,32 @@ const settingsPage = require('../admin/pages/settings');
 const navlinksPage = require('../admin/pages/navlinks');
 const navlinksRouter = require('./navlinks');
 const NavLink = require('../models/NavLink');
+
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ 
+  storage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only images allowed!'));
+    }
+  },
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 // Dashboard
 router.get('/', async (req, res) => {
@@ -29,22 +57,59 @@ router.get('/products', async (req, res) => {
   try {
     const products = await db.getProducts();
     const categories = await db.getCategories();
-    res.send(layout('Products', productsPage(products, categories), 'products'));
+    const navLinks = await NavLink.find({ isActive: true }).sort('order');
+    res.send(layout('Products', productsPage(products, categories, navLinks), 'products'));
   } catch (error) {
     res.send(layout('Products', `<p>Error: ${error.message}</p>`, 'products'));
   }
 });
 
-router.post('/products/add', async (req, res) => {
+router.post('/products/add', upload.single('imageFile'), async (req, res) => {
   try {
-    const { name, brand, price, stock, image, category } = req.body;
+    const { name, brand, price, stock, image, category, navLinks } = req.body;
+    // navLinks can be string or array
+    const navLinksArray = navLinks ? (Array.isArray(navLinks) ? navLinks : [navLinks]) : [];
+    
+    // Use uploaded file or URL
+    let imageUrl = image || 'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=300';
+    if (req.file) {
+      imageUrl = '/uploads/' + req.file.filename;
+    }
+    
     await db.addProduct({
       name,
       brand: brand || 'THE GIFT STUDIO',
       price: parseInt(price),
       stock: parseInt(stock),
-      image: image || 'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=300',
-      category
+      image: imageUrl,
+      category,
+      navLinks: navLinksArray
+    });
+    res.redirect('/admin/products');
+  } catch (error) {
+    res.redirect('/admin/products');
+  }
+});
+
+router.post('/products/edit/:id', upload.single('imageFile'), async (req, res) => {
+  try {
+    const { name, brand, price, stock, image, category, navLinks } = req.body;
+    const navLinksArray = navLinks ? (Array.isArray(navLinks) ? navLinks : [navLinks]) : [];
+    
+    // Use uploaded file or keep existing/URL
+    let imageUrl = image;
+    if (req.file) {
+      imageUrl = '/uploads/' + req.file.filename;
+    }
+    
+    await db.updateProduct(req.params.id, {
+      name,
+      brand: brand || 'THE GIFT STUDIO',
+      price: parseInt(price),
+      stock: parseInt(stock),
+      image: imageUrl,
+      category,
+      navLinks: navLinksArray
     });
     res.redirect('/admin/products');
   } catch (error) {

@@ -6,6 +6,13 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [location, setLocation] = useState('Mumbai')
   const [navLinks, setNavLinks] = useState([])
+  const [activeSubmenu, setActiveSubmenu] = useState(null)
+
+  // Default nav links as fallback - empty, will be populated from database
+  const defaultNavLinks = []
+
+  // Use navLinks from database
+  const displayLinks = navLinks
 
   // Fetch nav links from backend with auto-refresh every 5 seconds
   useEffect(() => {
@@ -84,7 +91,7 @@ function Navbar() {
         <div className="navbar-bottom desktop-only">
           <div className="navbar-container">
             <ul className="nav-links">
-              {navLinks.map(link => (
+              {displayLinks.map(link => (
                 <li key={link._id} className={link.hasDropdown && link.subLinks?.length > 0 ? 'dropdown' : ''}>
                   {link.hasDropdown && link.subLinks?.length > 0 ? (
                     <>
@@ -129,19 +136,51 @@ function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Slide Menu - Dynamic Links */}
+        {/* Mobile Slide Menu - Dynamic Links with Slide Submenu */}
         <div className={`mobile-slide-menu ${menuOpen ? 'open' : ''}`}>
-          <div className="mobile-menu-header">
-            <span>Menu</span>
-            <button onClick={() => setMenuOpen(false)}>✕</button>
+          {/* Main Menu */}
+          <div className={`mobile-menu-main ${activeSubmenu ? 'slide-out' : ''}`}>
+            <div className="mobile-menu-header">
+              <span>Menu</span>
+              <button onClick={() => setMenuOpen(false)}>✕</button>
+            </div>
+            <ul>
+              {displayLinks.map(link => (
+                <li key={link._id}>
+                  {link.hasDropdown && link.subLinks?.length > 0 ? (
+                    <div 
+                      className="mobile-menu-item with-arrow"
+                      onClick={() => setActiveSubmenu(link)}
+                    >
+                      <span>{link.title}</span>
+                      <span className="mobile-arrow-right">›</span>
+                    </div>
+                  ) : (
+                    <Link to={link.url} onClick={() => setMenuOpen(false)}>{link.title}</Link>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul>
-            {navLinks.map(link => (
-              <li key={link._id}>
-                <Link to={link.url} onClick={() => setMenuOpen(false)}>{link.title}</Link>
-              </li>
-            ))}
-          </ul>
+
+          {/* Submenu Panel - Only shows subLinks, not main link title */}
+          <div className={`mobile-submenu-panel ${activeSubmenu ? 'slide-in' : ''}`}>
+            <div className="mobile-menu-header">
+              <button className="back-btn" onClick={() => setActiveSubmenu(null)}>
+                <span>‹</span> Back
+              </button>
+              <button onClick={() => { setMenuOpen(false); setActiveSubmenu(null); }}>✕</button>
+            </div>
+            <ul>
+              {activeSubmenu?.subLinks?.filter(sub => sub.title && sub.url)?.map((sub, idx) => (
+                <li key={idx}>
+                  <Link to={sub.url} onClick={() => { setMenuOpen(false); setActiveSubmenu(null); }}>
+                    {sub.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Overlay */}

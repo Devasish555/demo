@@ -293,3 +293,31 @@
     font-size: 0.75rem;
   }
 }
+
+/* Loading & Empty States */
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.empty-state .btn-primary {
+  display: inline-block;
+  padding: 12px 30px;
+  background: #c9a050;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.empty-state .btn-primary:hover {
+  background: #b8903f;
+}

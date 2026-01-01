@@ -10,7 +10,22 @@ router.get('/', (req, res) => {
 // Products
 router.get('/products', async (req, res) => {
   try {
-    const products = await db.getProducts();
+    const { navlink } = req.query;
+    let products = await db.getProducts();
+    
+    console.log('API: navlink query =', navlink);
+    console.log('API: total products =', products.length);
+    
+    // Filter by navlink if provided
+    if (navlink) {
+      products = products.filter(p => {
+        if (!p.navLinks || p.navLinks.length === 0) return false;
+        // Check if any navLink matches (exact or partial)
+        return p.navLinks.some(nl => nl === navlink || navlink.includes(nl) || nl.includes(navlink));
+      });
+      console.log('API: filtered products =', products.length);
+    }
+    
     res.json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -14,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/admin/assets', express.static(path.join(__dirname, 'admin/assets')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploaded images
 
 // Routes
 const adminRoutes = require('./routes/admin');

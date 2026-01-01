@@ -82,6 +82,7 @@ module.exports = {
   getProducts: async () => await Product.find(),
   getProductById: async (id) => await Product.findById(id),
   addProduct: async (product) => await Product.create(product),
+  updateProduct: async (id, data) => await Product.findByIdAndUpdate(id, data, { new: true }),
   deleteProduct: async (id) => await Product.findByIdAndDelete(id),
   
   // Orders
