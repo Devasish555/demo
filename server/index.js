@@ -7,29 +7,28 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/admin/assets', express.static(path.join(__dirname, 'admin/assets')));
 
-// API Routes
-app.get('/api', (req, res) => {
-  res.json({ message: 'API is running!' });
-});
+// Routes
+const adminRoutes = require('./routes/admin');
+const apiRoutes = require('./routes/api');
 
-app.get('/api/products', (req, res) => {
-  res.json([
-    { id: 1, name: "Masaba's Luxe Indulgence Hamper", price: 13999 },
-    { id: 2, name: 'Out Doors with Anamika Khanna', price: 10999 },
-  ]);
-});
+app.use('/admin', adminRoutes);
+app.use('/api', apiRoutes);
 
-// Serve React build in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
-  
-  app.get('*', (req, res) => {
+// Production: Serve React build
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// All other routes -> React app (except /admin and /api)
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/admin') && !req.path.startsWith('/api')) {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
-  });
-}
+  }
+});
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server: http://localhost:${PORT}`);
+  console.log(`Admin:  http://localhost:${PORT}/admin`);
 });
