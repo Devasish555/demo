@@ -5,32 +5,7 @@ import './Navbar.css'
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [location, setLocation] = useState('Mumbai')
-  const [navLinks, setNavLinks] = useState([
-    { _id: '1', title: 'New Year', url: '/products/new-year', hasDropdown: false, subLinks: [] },
-    { _id: '2', title: 'Celebrity Hampers', url: '/products/celebrity-hampers', hasDropdown: false, subLinks: [] },
-    { _id: '3', title: 'Birthdays', url: '/products/birthday', hasDropdown: true, subLinks: [
-      { title: 'Birthday for Him', url: '/products/birthday-him' },
-      { title: 'Birthday for Her', url: '/products/birthday-her' }
-    ]},
-    { _id: '4', title: 'Anniversary', url: '/products/anniversary', hasDropdown: true, subLinks: [
-      { title: 'For Couple', url: '/products/anniversary-couple' },
-      { title: 'For Parents', url: '/products/anniversary-parents' }
-    ]},
-    { _id: '5', title: 'Last Minute Gifting', url: '/products/last-minute', hasDropdown: false, subLinks: [] },
-    { _id: '6', title: 'Best Sellers', url: '/products/bestsellers', hasDropdown: true, subLinks: [
-      { title: 'Gift Hampers', url: '/products/bestsellers-hampers' },
-      { title: 'Chocolates', url: '/products/bestsellers-chocolates' }
-    ]},
-    { _id: '7', title: 'Create Your Own Hamper', url: '/products/create-hamper', hasDropdown: false, subLinks: [] },
-    { _id: '8', title: 'Plants & Flowers', url: '/products/plants-flowers', hasDropdown: true, subLinks: [
-      { title: 'Indoor Plants', url: '/products/indoor-plants' },
-      { title: 'Fresh Flowers', url: '/products/fresh-flowers' }
-    ]},
-    { _id: '9', title: 'More Gifts', url: '/products', hasDropdown: true, subLinks: [
-      { title: 'Mugs & Frames', url: '/products/mugs-frames' },
-      { title: 'Dry Fruits', url: '/products/dry-fruits' }
-    ]}
-  ])
+  const [navLinks, setNavLinks] = useState([])
 
   // Fetch nav links from backend with auto-refresh every 5 seconds
   useEffect(() => {
