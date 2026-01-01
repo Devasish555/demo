@@ -110,11 +110,19 @@ const pageTitles = {
 }
 
 function Products() {
-  const { category } = useParams()
+  const { category, subcategory } = useParams()
   const [activeFilter, setActiveFilter] = useState('All')
   const [sortBy, setSortBy] = useState('price')
 
-  const pageTitle = pageTitles[category] || 'All Products'
+  // Generate page title from URL params
+  const formatTitle = (slug) => {
+    if (!slug) return 'All Products'
+    return slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  }
+  
+  const pageTitle = subcategory 
+    ? `${formatTitle(category)} - ${formatTitle(subcategory)}`
+    : (pageTitles[category] || formatTitle(category))
 
   const renderStars = (rating) => {
     return [...Array(5)].map((_, i) => (

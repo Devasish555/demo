@@ -1,10 +1,61 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './Navbar.css'
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [location, setLocation] = useState('Mumbai')
+  const [navLinks, setNavLinks] = useState([
+    { _id: '1', title: 'New Year', url: '/products/new-year', hasDropdown: false, subLinks: [] },
+    { _id: '2', title: 'Celebrity Hampers', url: '/products/celebrity-hampers', hasDropdown: false, subLinks: [] },
+    { _id: '3', title: 'Birthdays', url: '/products/birthday', hasDropdown: true, subLinks: [
+      { title: 'Birthday for Him', url: '/products/birthday-him' },
+      { title: 'Birthday for Her', url: '/products/birthday-her' }
+    ]},
+    { _id: '4', title: 'Anniversary', url: '/products/anniversary', hasDropdown: true, subLinks: [
+      { title: 'For Couple', url: '/products/anniversary-couple' },
+      { title: 'For Parents', url: '/products/anniversary-parents' }
+    ]},
+    { _id: '5', title: 'Last Minute Gifting', url: '/products/last-minute', hasDropdown: false, subLinks: [] },
+    { _id: '6', title: 'Best Sellers', url: '/products/bestsellers', hasDropdown: true, subLinks: [
+      { title: 'Gift Hampers', url: '/products/bestsellers-hampers' },
+      { title: 'Chocolates', url: '/products/bestsellers-chocolates' }
+    ]},
+    { _id: '7', title: 'Create Your Own Hamper', url: '/products/create-hamper', hasDropdown: false, subLinks: [] },
+    { _id: '8', title: 'Plants & Flowers', url: '/products/plants-flowers', hasDropdown: true, subLinks: [
+      { title: 'Indoor Plants', url: '/products/indoor-plants' },
+      { title: 'Fresh Flowers', url: '/products/fresh-flowers' }
+    ]},
+    { _id: '9', title: 'More Gifts', url: '/products', hasDropdown: true, subLinks: [
+      { title: 'Mugs & Frames', url: '/products/mugs-frames' },
+      { title: 'Dry Fruits', url: '/products/dry-fruits' }
+    ]}
+  ])
+
+  // Fetch nav links from backend with auto-refresh every 5 seconds
+  useEffect(() => {
+    const fetchNavLinks = async () => {
+      try {
+        const response = await fetch('/api/navlinks')
+        if (response.ok) {
+          const data = await response.json()
+          if (Array.isArray(data) && data.length > 0) {
+            setNavLinks(data)
+          }
+        }
+      } catch (error) {
+        console.log('Using default nav links')
+      }
+    }
+    
+    // Initial fetch
+    fetchNavLinks()
+    
+    // Auto-refresh every 5 seconds
+    const interval = setInterval(fetchNavLinks, 5000)
+    
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <>
@@ -54,54 +105,31 @@ function Navbar() {
           </div>
         </div>
 
-        {/* Desktop Bottom Menu */}
+        {/* Desktop Bottom Menu - Dynamic Links */}
         <div className="navbar-bottom desktop-only">
           <div className="navbar-container">
             <ul className="nav-links">
-              <li><Link to="/products/new-year">New Year</Link></li>
-              <li><Link to="/products/celebrity-hampers">Celebrity Hampers</Link></li>
-              <li className="dropdown">
-                <span>Birthdays <span className="arrow">▾</span></span>
-                <ul className="dropdown-menu">
-                  <li><Link to="/products/birthday">Birthday for Him</Link></li>
-                  <li><Link to="/products/birthday">Birthday for Her</Link></li>
-                </ul>
-              </li>
-              <li className="dropdown">
-                <span>Anniversary <span className="arrow">▾</span></span>
-                <ul className="dropdown-menu">
-                  <li><Link to="/products/anniversary">For Couple</Link></li>
-                  <li><Link to="/products/anniversary">For Parents</Link></li>
-                </ul>
-              </li>
-              <li><Link to="/products/last-minute">Last Minute Gifting</Link></li>
-              <li className="dropdown">
-                <span>Best Sellers <span className="arrow">▾</span></span>
-                <ul className="dropdown-menu">
-                  <li><Link to="/products/bestsellers">Gift Hampers</Link></li>
-                  <li><Link to="/products/bestsellers">Chocolates</Link></li>
-                </ul>
-              </li>
-              <li><Link to="/products/create-hamper">Create Your Own Hamper</Link></li>
-              <li className="dropdown">
-                <span>Plants & Flowers <span className="arrow">▾</span></span>
-                <ul className="dropdown-menu">
-                  <li><Link to="/products/plants-flowers">Indoor Plants</Link></li>
-                  <li><Link to="/products/plants-flowers">Fresh Flowers</Link></li>
-                </ul>
-              </li>
-              <li className="dropdown">
-                <span>More Gifts <span className="arrow">▾</span></span>
-                <ul className="dropdown-menu">
-                  <li><Link to="/products">Mugs & Frames</Link></li>
-                  <li><Link to="/products">Dry Fruits</Link></li>
-                </ul>
-              </li>
+              {navLinks.map(link => (
+                <li key={link._id} className={link.hasDropdown && link.subLinks?.length > 0 ? 'dropdown' : ''}>
+                  {link.hasDropdown && link.subLinks?.length > 0 ? (
+                    <>
+                      <span>{link.title} <span className="arrow">▾</span></span>
+                      <ul className="dropdown-menu">
+                        {link.subLinks.map((sub, idx) => (
+                          <li key={idx}><Link to={sub.url}>{sub.title}</Link></li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <Link to={link.url}>{link.title}</Link>
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Mobile Top Row: Hamburger | Logo | Cart - STICKY */}
+        {/* Mobile Top Row */}
         <div className="mobile-top-bar mobile-only">
           <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
             <span></span>
@@ -126,22 +154,18 @@ function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Slide Menu */}
+        {/* Mobile Slide Menu - Dynamic Links */}
         <div className={`mobile-slide-menu ${menuOpen ? 'open' : ''}`}>
           <div className="mobile-menu-header">
             <span>Menu</span>
             <button onClick={() => setMenuOpen(false)}>✕</button>
           </div>
           <ul>
-            <li><Link to="/products/new-year" onClick={() => setMenuOpen(false)}>New Year</Link></li>
-            <li><Link to="/products/celebrity-hampers" onClick={() => setMenuOpen(false)}>Celebrity Hampers</Link></li>
-            <li><Link to="/products/birthday" onClick={() => setMenuOpen(false)}>Birthdays</Link></li>
-            <li><Link to="/products/anniversary" onClick={() => setMenuOpen(false)}>Anniversary</Link></li>
-            <li><Link to="/products/last-minute" onClick={() => setMenuOpen(false)}>Last Minute Gifting</Link></li>
-            <li><Link to="/products/bestsellers" onClick={() => setMenuOpen(false)}>Best Sellers</Link></li>
-            <li><Link to="/products/create-hamper" onClick={() => setMenuOpen(false)}>Create Your Own Hamper</Link></li>
-            <li><Link to="/products/plants-flowers" onClick={() => setMenuOpen(false)}>Plants & Flowers</Link></li>
-            <li><Link to="/products/corporate" onClick={() => setMenuOpen(false)}>Corporate Gifts</Link></li>
+            {navLinks.map(link => (
+              <li key={link._id}>
+                <Link to={link.url} onClick={() => setMenuOpen(false)}>{link.title}</Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -149,7 +173,7 @@ function Navbar() {
         {menuOpen && <div className="overlay" onClick={() => setMenuOpen(false)}></div>}
       </nav>
 
-      {/* Mobile Search Row - NOT STICKY (outside navbar) */}
+      {/* Mobile Search Row */}
       <div className="mobile-search-row-wrapper mobile-only">
         <div className="mobile-search-row">
           <div className="mobile-search">

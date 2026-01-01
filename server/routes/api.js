@@ -8,28 +8,52 @@ router.get('/', (req, res) => {
 });
 
 // Products
-router.get('/products', (req, res) => {
-  res.json(db.getProducts());
+router.get('/products', async (req, res) => {
+  try {
+    const products = await db.getProducts();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-router.get('/products/:id', (req, res) => {
-  const product = db.getProductById(parseInt(req.params.id));
-  product ? res.json(product) : res.status(404).json({ error: 'Product not found' });
+router.get('/products/:id', async (req, res) => {
+  try {
+    const product = await db.getProductById(req.params.id);
+    product ? res.json(product) : res.status(404).json({ error: 'Product not found' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Categories
-router.get('/categories', (req, res) => {
-  res.json(db.getCategories());
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await db.getCategories();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Orders
-router.get('/orders', (req, res) => {
-  res.json(db.getOrders());
+router.get('/orders', async (req, res) => {
+  try {
+    const orders = await db.getOrders();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Stats
-router.get('/stats', (req, res) => {
-  res.json(db.getStats());
+router.get('/stats', async (req, res) => {
+  try {
+    const stats = await db.getStats();
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;
