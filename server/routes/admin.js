@@ -131,7 +131,23 @@ router.get('/orders', async (req, res) => {
   try {
     const status = req.query.status || 'all';
     const orders = await db.getOrders(status);
-    res.send(layout('Orders', ordersPage(orders, status), 'orders'));
+    const formattedOrders = orders.map(o => ({
+      id: o._id,
+      orderId: o.orderId,
+      customer: o.customer,
+      email: o.email || '',
+      phone: o.phone || '',
+      items: o.items || [],
+      itemCount: o.itemCount || (o.items ? o.items.length : 0),
+      total: o.total,
+      status: o.status,
+      address: o.address || '',
+      city: o.city || '',
+      state: o.state || '',
+      pincode: o.pincode || '',
+      date: new Date(o.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    }));
+    res.send(layout('Orders', ordersPage(formattedOrders, status), 'orders'));
   } catch (error) {
     res.send(layout('Orders', `<p>Error: ${error.message}</p>`, 'orders'));
   }

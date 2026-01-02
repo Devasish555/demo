@@ -1,41 +1,12 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 import './Cart.css'
 
-const initialCartItems = [
-  {
-    id: 1,
-    name: 'Midnight Stash',
-    price: 1429,
-    quantity: 1,
-    image: 'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=200',
-  },
-  {
-    id: 2,
-    name: 'Cocoa Bliss Hamper',
-    price: 1077,
-    quantity: 2,
-    image: 'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=200',
-  },
-]
-
 function Cart() {
-  const [cartItems, setCartItems] = useState(initialCartItems)
+  const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart()
 
-  const updateQuantity = (id, newQty) => {
-    if (newQty < 1) return
-    setCartItems(items =>
-      items.map(item => item.id === id ? { ...item, quantity: newQty } : item)
-    )
-  }
-
-  const removeItem = (id) => {
-    setCartItems(items => items.filter(item => item.id !== id))
-  }
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = subtotal > 999 ? 0 : 99
-  const total = subtotal + shipping
+  const shipping = cartTotal > 999 ? 0 : 99
+  const total = cartTotal + shipping
 
   if (cartItems.length === 0) {
     return (
@@ -76,8 +47,8 @@ function Cart() {
                   <img src={item.image} alt={item.name} />
                   <div className="item-details">
                     <h3>{item.name}</h3>
-                    <p className="item-price">₹{item.price.toLocaleString()}</p>
-                    <button className="remove-btn" onClick={() => removeItem(item.id)}>
+                    <p className="item-price">₹{item.price?.toLocaleString()}</p>
+                    <button className="remove-btn" onClick={() => removeFromCart(item.id)}>
                       Remove
                     </button>
                   </div>
@@ -98,7 +69,7 @@ function Cart() {
             <h2>Order Summary</h2>
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>₹{subtotal.toLocaleString()}</span>
+              <span>₹{cartTotal.toLocaleString()}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>

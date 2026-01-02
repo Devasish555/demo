@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import './Navbar.css'
 
 function Navbar() {
@@ -7,6 +9,8 @@ function Navbar() {
   const [location, setLocation] = useState('Mumbai')
   const [navLinks, setNavLinks] = useState([])
   const [activeSubmenu, setActiveSubmenu] = useState(null)
+  const { cartCount } = useCart()
+  const { isLoggedIn } = useAuth()
 
   // Default nav links as fallback - empty, will be populated from database
   const defaultNavLinks = []
@@ -68,15 +72,16 @@ function Navbar() {
                 <button className="corporate-btn">Bulk/Corporate Enquiry</button>
               </div>
               <div className="right-bottom">
-                <Link to="/cart" className="icon-btn" aria-label="Cart">
+                <Link to="/cart" className="icon-btn cart-icon" aria-label="Cart">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M6 6h15l-1.5 9h-12z"/>
                     <circle cx="9" cy="20" r="1.5"/>
                     <circle cx="18" cy="20" r="1.5"/>
                     <path d="M6 6L5 3H2"/>
                   </svg>
+                  {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
                 </Link>
-                <Link to="/account" className="icon-btn" aria-label="Account">
+                <Link to={isLoggedIn ? "/account" : "/login"} className="icon-btn" aria-label="Account">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <circle cx="12" cy="8" r="4"/>
                     <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
@@ -133,6 +138,7 @@ function Navbar() {
               <circle cx="18" cy="20" r="1.5"/>
               <path d="M6 6L5 3H2"/>
             </svg>
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </Link>
         </div>
 

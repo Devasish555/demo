@@ -10,7 +10,7 @@
 }
 
 .account-header {
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
 .account-header h1 {
@@ -18,30 +18,7 @@
   font-size: 2.5rem;
   font-weight: 500;
   color: #1a1a2e;
-  margin: 0 0 10px 0;
-}
-
-.logout-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logout-link svg {
-  width: 16px;
-  height: 16px;
-  stroke: #666;
-}
-
-.logout-link a {
-  color: #666;
-  font-size: 0.9rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.logout-link a:hover {
-  color: #1a1a2e;
+  margin: 0;
 }
 
 .account-content {
@@ -55,40 +32,185 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a2e;
-  margin: 0 0 15px 0;
+  margin: 0 0 20px 0;
 }
 
-.order-history p {
+/* Email Search */
+.email-search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.email-search input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.email-search input:focus {
+  outline: none;
+  border-color: #1a1a2e;
+}
+
+.email-search button {
+  padding: 12px 20px;
+  background: #1a1a2e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.email-search button:hover {
+  background: #2d2d4a;
+}
+
+.loading-text,
+.no-orders {
   color: #666;
   font-size: 0.95rem;
-  margin: 0;
 }
 
+/* Orders List */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f9f9f9;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-right: 15px;
+}
+
+.order-date {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.order-status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.order-items {
+  padding: 15px 20px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.order-item .item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.order-item .item-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.order-item .item-qty {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.order-item .item-price {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.order-footer {
+  padding: 15px 20px;
+  background: #f9f9f9;
+  text-align: right;
+}
+
+.order-total {
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 1rem;
+}
+
+/* Account Details */
 .account-details {
   text-align: right;
 }
 
 .user-name {
-  color: #333;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
   margin: 0 0 5px 0;
 }
 
-.user-country {
+.user-email {
   color: #666;
   font-size: 0.95rem;
-  margin: 0 0 15px 0;
+  margin: 0 0 20px 0;
 }
 
-.view-addresses {
+.no-account {
   color: #666;
   font-size: 0.9rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
 
-.view-addresses:hover {
-  color: #1a1a2e;
+.logout-btn {
+  padding: 10px 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  border-color: #e74c3c;
+  color: #e74c3c;
 }
 
 /* Responsive */
@@ -105,6 +227,10 @@
   .account-header h1 {
     font-size: 2rem;
   }
+  
+  .email-search {
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 480px) {
@@ -114,5 +240,11 @@
   
   .account-header h1 {
     font-size: 1.8rem;
+  }
+  
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }

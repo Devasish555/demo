@@ -1,181 +1,71 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 import './ProductDetails.css'
-
-// Sample product data
-const products = {
-  1: {
-    id: 1,
-    name: "Masaba's Luxe Indulgence Hamper",
-    price: 13999,
-    originalPrice: 15999,
-    description: "A luxurious gift hamper curated by Masaba Gupta featuring premium artisanal products. Perfect for those who appreciate fine craftsmanship and elegant design.",
-    images: [
-      'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1050244/pexels-photo-1050244.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'Handcrafted premium packaging',
-      'Artisanal chocolates & treats',
-      'Designer accessories',
-      'Personalized gift card included',
-    ],
-    inStock: true,
-    rating: 4.8,
-    reviews: 124,
-  },
-  2: {
-    id: 2,
-    name: 'Out Doors with Anamika Khanna',
-    price: 10999,
-    originalPrice: 12999,
-    description: "An exclusive outdoor collection designed by Anamika Khanna. Features premium quality items perfect for nature lovers and adventure seekers.",
-    images: [
-      'https://images.pexels.com/photos/1666069/pexels-photo-1666069.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/264985/pexels-photo-264985.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'Premium outdoor accessories',
-      'Eco-friendly materials',
-      'Designer collaboration',
-      'Gift-ready packaging',
-    ],
-    inStock: true,
-    rating: 4.9,
-    reviews: 89,
-  },
-  3: {
-    id: 3,
-    name: 'Cocoa Bliss Hamper',
-    price: 1077,
-    originalPrice: 1099,
-    description: "Indulge in the finest chocolate collection. A perfect gift for chocolate lovers featuring premium cocoa treats from around the world.",
-    images: [
-      'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'Premium Belgian chocolates',
-      'Assorted truffle collection',
-      'Elegant gift box',
-      'Perfect for any occasion',
-    ],
-    inStock: true,
-    rating: 4.6,
-    reviews: 56,
-  },
-  4: {
-    id: 4,
-    name: 'Sweet Alternatives',
-    price: 3079,
-    originalPrice: null,
-    description: "A healthy twist on traditional gifting. Features sugar-free and organic treats for health-conscious recipients.",
-    images: [
-      'https://images.pexels.com/photos/264985/pexels-photo-264985.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/776656/pexels-photo-776656.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'Sugar-free options',
-      'Organic ingredients',
-      'Healthy snacks included',
-      'Beautiful presentation',
-    ],
-    inStock: true,
-    rating: 5,
-    reviews: 12,
-  },
-  5: {
-    id: 5,
-    name: 'Midnight Stash',
-    price: 1429,
-    originalPrice: null,
-    description: "The perfect late-night indulgence hamper. Curated selection of gourmet snacks and treats for those midnight cravings.",
-    images: [
-      'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1050244/pexels-photo-1050244.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'Gourmet snacks selection',
-      'Premium cookies & biscuits',
-      'Artisanal treats',
-      'Midnight-themed packaging',
-    ],
-    inStock: true,
-    rating: 4.5,
-    reviews: 34,
-  },
-  6: {
-    id: 6,
-    name: 'Small Big Things',
-    price: 5499,
-    originalPrice: null,
-    description: "Sometimes the smallest gifts make the biggest impact. A thoughtfully curated collection of premium miniature delights.",
-    images: [
-      'https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1666069/pexels-photo-1666069.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'Curated mini collection',
-      'Premium quality items',
-      'Compact elegant packaging',
-      'Perfect for any occasion',
-    ],
-    inStock: true,
-    rating: 4.4,
-    reviews: 28,
-  },
-  7: {
-    id: 7,
-    name: 'Purple Spray Money Plant',
-    price: 699,
-    originalPrice: null,
-    description: "Bring prosperity and good luck with this beautiful money plant in a stunning purple ceramic pot. Perfect for home or office.",
-    images: [
-      'https://images.pexels.com/photos/776656/pexels-photo-776656.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1084199/pexels-photo-1084199.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'Live money plant',
-      'Designer ceramic pot',
-      'Low maintenance',
-      'Air purifying',
-    ],
-    inStock: true,
-    rating: 3,
-    reviews: 8,
-  },
-  8: {
-    id: 8,
-    name: 'The Luxury Food Trunk',
-    price: 9679,
-    originalPrice: null,
-    description: "An extravagant collection of gourmet foods from around the world. The ultimate gift for food connoisseurs.",
-    images: [
-      'https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?auto=compress&cs=tinysrgb&w=800',
-      'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=800',
-    ],
-    features: [
-      'International gourmet selection',
-      'Premium wooden trunk',
-      'Artisanal cheeses & meats',
-      'Fine wines included',
-    ],
-    inStock: true,
-    rating: 4.8,
-    reviews: 45,
-  },
-}
 
 function ProductDetails() {
   const { id } = useParams()
-  const product = products[id] || products[1]
-  
+  const navigate = useNavigate()
+  const { addToCart } = useCart()
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [addedToCart, setAddedToCart] = useState(false)
 
-  const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  // Fetch product from database
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true)
+      try {
+        const response = await fetch(`/api/products/${id}`)
+        if (response.ok) {
+          const data = await response.json()
+          setProduct(data)
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error)
+      }
+      setLoading(false)
+    }
+    
+    fetchProduct()
+  }, [id])
+
+  if (loading) {
+    return (
+      <div className="product-details">
+        <div className="container">
+          <div className="loading-state">
+            <p>Loading product...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="product-details">
+        <div className="container">
+          <div className="empty-state">
+            <p>Product not found</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Handle images - use array or single image
+  const images = product.images && product.images.length > 0 
+    ? product.images 
+    : product.image 
+      ? [product.image] 
+      : ['https://via.placeholder.com/800x800?text=No+Image']
+
+  const discount = product.originalPrice 
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0
 
   return (
     <div className="product-details">
@@ -184,20 +74,22 @@ function ProductDetails() {
           {/* Image Gallery */}
           <div className="product-gallery">
             <div className="main-image">
-              <img src={product.images[selectedImage]} alt={product.name} />
+              <img src={images[selectedImage]} alt={product.name} />
               {discount > 0 && <span className="discount-badge">{discount}% OFF</span>}
             </div>
-            <div className="thumbnail-list">
-              {product.images.map((img, index) => (
-                <button
-                  key={index}
-                  className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
-                  onClick={() => setSelectedImage(index)}
-                >
-                  <img src={img} alt={`${product.name} ${index + 1}`} />
-                </button>
-              ))}
-            </div>
+            {images.length > 1 && (
+              <div className="thumbnail-list">
+                {images.map((img, index) => (
+                  <button
+                    key={index}
+                    className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    onClick={() => setSelectedImage(index)}
+                  >
+                    <img src={img} alt={`${product.name} ${index + 1}`} />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
@@ -207,34 +99,36 @@ function ProductDetails() {
             <div className="product-rating">
               <div className="stars">
                 {[...Array(5)].map((_, i) => (
-                  <svg key={i} className={i < Math.floor(product.rating) ? 'filled' : ''} viewBox="0 0 24 24">
+                  <svg key={i} className={i < Math.floor(product.rating || 4) ? 'filled' : ''} viewBox="0 0 24 24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 ))}
               </div>
-              <span className="rating-text">{product.rating} ({product.reviews} reviews)</span>
+              <span className="rating-text">{product.rating || 4} ({product.reviews || 0} reviews)</span>
             </div>
 
             <div className="product-price">
-              <span className="current-price">₹{product.price.toLocaleString()}</span>
-              {product.originalPrice > product.price && (
+              <span className="current-price">₹{product.price?.toLocaleString()}</span>
+              {product.originalPrice && product.originalPrice > product.price && (
                 <span className="original-price">₹{product.originalPrice.toLocaleString()}</span>
               )}
             </div>
 
-            <p className="product-description">{product.description}</p>
+            <p className="product-description">{product.description || 'No description available'}</p>
 
-            <div className="product-features">
-              <h3>What's Included:</h3>
-              <ul>
-                {product.features.map((feature, index) => (
-                  <li key={index}>
-                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {product.features && product.features.length > 0 && (
+              <div className="product-features">
+                <h3>What's Included:</h3>
+                <ul>
+                  {product.features.map((feature, index) => (
+                    <li key={index}>
+                      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="product-actions">
               <div className="quantity-selector">
@@ -242,11 +136,21 @@ function ProductDetails() {
                 <span>{quantity}</span>
                 <button onClick={() => setQuantity(quantity + 1)}>+</button>
               </div>
-              <button className="add-to-cart">
+              <button 
+                className={`add-to-cart ${addedToCart ? 'added' : ''}`}
+                onClick={() => {
+                  addToCart(product, quantity)
+                  setAddedToCart(true)
+                  setTimeout(() => setAddedToCart(false), 2000)
+                }}
+              >
                 <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-                Add to Cart
+                {addedToCart ? 'Added!' : 'Add to Cart'}
               </button>
-              <button className="buy-now">Buy Now</button>
+              <button className="buy-now" onClick={() => {
+                addToCart(product, quantity)
+                navigate('/checkout')
+              }}>Buy Now</button>
             </div>
 
             <div className="product-meta">

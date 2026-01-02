@@ -12,6 +12,40 @@
   margin: 0 auto;
 }
 
+/* Empty Checkout */
+.empty-checkout {
+  text-align: center;
+  padding: 60px 20px;
+  grid-column: 1 / -1;
+}
+
+.empty-checkout h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  margin: 0 0 10px 0;
+}
+
+.empty-checkout p {
+  color: #666;
+  margin: 0 0 25px 0;
+}
+
+.empty-checkout .continue-btn {
+  display: inline-block;
+  padding: 14px 30px;
+  background: #1a1a2e;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.empty-checkout .continue-btn:hover {
+  background: #2d2d4a;
+}
+
 /* Left Form Section */
 .checkout-form-section {
   padding: 0;

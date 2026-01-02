@@ -1,26 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 import './Checkout.css'
-
-const cartItems = [
-  {
-    id: 1,
-    name: 'Midnight Stash',
-    price: 1429,
-    quantity: 1,
-    image: 'https://images.pexels.com/photos/1666065/pexels-photo-1666065.jpeg?auto=compress&cs=tinysrgb&w=200',
-  },
-  {
-    id: 2,
-    name: 'Cocoa Bliss Hamper',
-    price: 1077,
-    quantity: 2,
-    image: 'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=200',
-  },
-]
 
 function Checkout() {
   const navigate = useNavigate()
+  const { cartItems, cartTotal, clearCart } = useCart()
+  
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
@@ -44,14 +30,71 @@ function Checkout() {
     }))
   }
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = subtotal > 999 ? 0 : 99
-  const total = subtotal + shipping
+  const shipping = cartTotal > 999 ? 0 : 99
+  const total = cartTotal + shipping
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Order placed:', { formData, paymentMethod })
-    navigate('/order-success')
+    
+    try {
+      const orderData = {
+        customer: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone,
+        items: cartItems.map(item => ({
+          productId: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image
+        })),
+        total: total,
+        shipping: shipping,
+        address: formData.address + (formData.apartment ? `, ${formData.apartment}` : ''),
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
+        paymentMethod: paymentMethod
+      }
+      
+      console.log('Sending order:', orderData)
+      
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      })
+      
+      const result = await response.json()
+      console.log('Order response:', result)
+      
+      if (response.ok && result.success) {
+        // Save email for order history
+        localStorage.setItem('userEmail', formData.email)
+        clearCart()
+        navigate('/order-success', { state: { orderId: result.orderId } })
+      } else {
+        alert('Order failed: ' + (result.error || 'Please try again.'))
+      }
+    } catch (error) {
+      console.error('Order error:', error)
+      alert('Order failed: ' + error.message)
+    }
+  }
+
+  // Redirect to cart if empty
+  if (cartItems.length === 0) {
+    return (
+      <div className="checkout-page">
+        <div className="checkout-container">
+          <div className="empty-checkout">
+            <h2>Your cart is empty</h2>
+            <p>Add some products before checkout</p>
+            <Link to="/products" className="continue-btn">Continue Shopping</Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -260,7 +303,7 @@ function Checkout() {
           <div className="summary-totals">
             <div className="total-row">
               <span>Subtotal</span>
-              <span>₹{subtotal.toLocaleString()}</span>
+              <span>₹{cartTotal.toLocaleString()}</span>
             </div>
             <div className="total-row">
               <span>Shipping</span>
