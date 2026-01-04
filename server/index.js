@@ -40,3 +40,19 @@ app.listen(PORT, () => {
   console.log(`Server: http://localhost:${PORT}`);
   console.log(`Admin:  http://localhost:${PORT}/admin`);
 });
+
+// Global Error Handler - prevents crash
+app.use((err, req, res, next) => {
+  console.error('Global Error:', err.message);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// Handle uncaught exceptions - prevents crash
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err.message);
+});
+
+// Handle unhandled promise rejections - prevents crash
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err.message);
+});
